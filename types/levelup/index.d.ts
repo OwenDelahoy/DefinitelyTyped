@@ -31,28 +31,37 @@ interface Batch {
 }
 
 interface LevelUpBase<BatchType extends Batch> {
-    open(callback ?: (error : any) => any): void;
-    close(callback ?: (error : any) => any): void;
-    put(key: any, value: any, callback ?: (error: any) => any): void;
-    put(key: any, value: any, options?: { sync?: boolean }, callback ?: (error: any) => any): void;
-    get(key: any, callback ?: (error: any, value: any) => any): void;
+    open(callback: (error : any) => any): void;
+    open(): Promise<LevelUp>;
+    close(callback: (error : any) => any): void;
+    close(): Promise<undefined>;
 
-    get(key: any, options ?: { keyEncoding?: Encoding; fillCache?: boolean }, callback ?: (error: any, value: any) => any): void;
-    del(key: any, callback ?: (error: any) => any): void;
-    del(key: any, options ?: { keyEncoding?: Encoding; sync?: boolean }, callback ?: (error: any) => any): void;
+    put(key: any, value: any): Promise<undefined>;
+    put(key: any, value: any, callback: (error: any) => any): void;
+    put(key: any, value: any, options: { sync?: boolean }): Promise<undefined>;
+    put(key: any, value: any, options: { sync?: boolean }, callback: (error: any) => any): void;
 
+    get(key: any): Promise<Buffer>;
+    get(key: any, callback: (error: any, value: any) => any): void;
+    get(key: any, options: { keyEncoding?: Encoding; fillCache?: boolean }): Promise<Buffer>;
+    get(key: any, options: { keyEncoding?: Encoding; fillCache?: boolean }, callback: (error: any, value: any) => any): void;
+    
+    del(key: any): Promise<undefined>;
+    del(key: any, callback: (error: any) => any): void;
+    del(key: any, options: { keyEncoding?: Encoding; sync?: boolean }): Promise<undefined>;
+    del(key: any, options: { keyEncoding?: Encoding; sync?: boolean }, callback: (error: any) => any): void;
 
-    batch(array: BatchType[], options?: { keyEncoding?: Encoding; valueEncoding?: Encoding; sync?: boolean }, callback?: (error?: any)=>any): void;
-    batch(array: BatchType[], callback?: (error?: any)=>any): void;
+    batch(array: BatchType[]): Promise<undefined>;
+    batch(array: BatchType[], callback: (error?: any)=>any): void;
+    batch(array: BatchType[], options: { keyEncoding?: Encoding; valueEncoding?: Encoding; sync?: boolean }): Promise<undefined>;
+    batch(array: BatchType[], options: { keyEncoding?: Encoding; valueEncoding?: Encoding; sync?: boolean }, callback: (error?: any)=>any): void;
     batch():LevelUpChain;
+
     isOpen():boolean;
     isClosed():boolean;
     createReadStream(options?: any): any;
     createKeyStream(options?: any): any;
     createValueStream(options?: any): any;
-    createWriteStream(options?: any): any;
-    destroy(location: string, callback?: Function): void;
-    repair(location: string, callback?: Function): void;
 }
 
 type LevelUp = LevelUpBase<Batch>
@@ -63,7 +72,8 @@ interface LevelUpChain {
     del(key: any): LevelUpChain;
     del(key: any, options ?: { keyEncoding?: Encoding; sync?: boolean }): LevelUpChain;
     clear(): LevelUpChain;
-    write(callback?: (error?: any)=>any) : LevelUpChain;
+    write() : Promise<undefined>;
+    write(callback: (error?: any)=>any) : void;
 }
 
 interface levelupOptions {
